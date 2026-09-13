@@ -7,7 +7,7 @@ A clean, responsive web-based calculator built with HTML, CSS, and JavaScript.
 - Input Validation: Handles empty input fields gracefully.
 - Division by Zero Protection: Shows a clear error message instead of failing.
 - Interactive Interface: Instant calculation without needing to restart the app.
-
+ ![Calculator Screenshot](./screenshot.png)
 ## How to Run
 1. Clone this repository:
    ```bash
