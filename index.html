@@ -1,70 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
-    <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
-        .calculator { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 300px; }
-        input, select, button { width: 100%; margin-bottom: 10px; padding: 10px; box-sizing: border-box; font-size: 16px; }
-        .result { font-weight: bold; font-size: 18px; margin-top: 10px; color: #333; }
-        .error { color: red; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
+
+  :root{
+    --body-bg: #1b1d24;
+    --plate: #24262f;
+    --plate-edge: #2f323d;
+    --screen: #170f16;
+    --screen-glow: #ffb8d9;
+    --pink: #ec5ea3;
+    --ink: #e9e6df;
+    --muted: #8a8d98;
+    --danger: #e05c4f;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(circle at 50% 0%, #26282f 0%, var(--body-bg) 60%);
+    font-family:'Inter', sans-serif;
+    color: var(--ink);
+  }
+
+  .device{
+    width: 320px;
+    background: var(--plate);
+    border: 1px solid var(--plate-edge);
+    border-radius: 22px;
+    padding: 22px 20px 26px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+
+  .brand{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom: 14px;
+    padding: 0 2px;
+  }
+  .brand-name{
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .brand-mark{
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--pink);
+    box-shadow: 0 0 8px var(--pink);
+  }
+
+  .screen{
+    background: var(--screen);
+    border-radius: 12px;
+    padding: 16px 16px 14px;
+    margin-bottom: 18px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    min-height: 78px;
+  }
+  .expr{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    min-height: 18px;
+    letter-spacing: 0.02em;
+  }
+  .out{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--screen-glow);
+    margin-top: 4px;
+    word-break: break-all;
+    text-shadow: 0 0 10px rgba(255,184,217,0.3);
+  }
+  .out.err{
+    color: var(--danger);
+    font-size: 15px;
+    font-weight: 500;
+    text-shadow: none;
+    font-family:'Inter', sans-serif;
+  }
+
+  .field{
+    margin-bottom: 12px;
+  }
+  .field label{
+    display:block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    padding: 0 2px;
+  }
+  input[type="number"]{
+    width:100%;
+    background: #1c1e26;
+    border: 1px solid var(--plate-edge);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 16px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  input[type="number"]:focus{
+    border-color: var(--pink);
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button{
+    opacity: 0.4;
+  }
+
+  .op-row{
+    display:flex;
+    gap: 8px;
+    margin: 14px 0 18px;
+  }
+  .op-btn{
+    flex:1;
+    background: #1c1e26;
+    border: 1px solid var(--plate-edge);
+    border-radius: 10px;
+    padding: 10px 0;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 17px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .op-btn:hover{
+    color: var(--ink);
+    border-color: #454854;
+  }
+  .op-btn.active{
+    background: var(--pink);
+    border-color: var(--pink);
+    color: #1b1d24;
+    font-weight: 700;
+  }
+
+  .equals{
+    width:100%;
+    padding: 14px 0;
+    background: transparent;
+    border: 1px solid var(--pink);
+    color: var(--pink);
+    border-radius: 10px;
+    font-family:'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .equals:hover{
+    background: var(--pink);
+    color: #1b1d24;
+  }
+  .equals:active{
+    transform: scale(0.98);
+  }
+</style>
 </head>
 <body>
 
-<div class="calculator">
-    <h2>Calculator</h2>
-    <input type="number" id="num1" placeholder="First Number">
-    <input type="number" id="num2" placeholder="Second Number">
-    
-    <select id="operator">
-        <option value="+">Addition (+)</option>
-        <option value="-">Subtraction (-)</option>
-        <option value="*">Multiplication (*)</option>
-        <option value="/">Division (/)</option>
-    </select>
-    
-    <button onclick="calculate()">Calculate</button>
-    
-    <div id="result" class="result"></div>
+<div class="device">
+  <div class="brand">
+    <span class="brand-name">Quick Calc</span>
+    <span class="brand-mark"></span>
+  </div>
+
+  <div class="screen">
+    <div class="expr" id="expr">0 + 0</div>
+    <div class="out" id="result">0</div>
+  </div>
+
+  <div class="field">
+    <label for="num1">First number</label>
+    <input type="number" id="num1" placeholder="0" oninput="updateExpr()">
+  </div>
+
+  <div class="field">
+    <label for="num2">Second number</label>
+    <input type="number" id="num2" placeholder="0" oninput="updateExpr()">
+  </div>
+
+  <div class="op-row" id="opRow">
+    <button class="op-btn active" data-op="+" onclick="setOp('+')">+</button>
+    <button class="op-btn" data-op="-" onclick="setOp('-')">−</button>
+    <button class="op-btn" data-op="*" onclick="setOp('*')">×</button>
+    <button class="op-btn" data-op="/" onclick="setOp('/')">÷</button>
+  </div>
+
+  <button class="equals" onclick="calculate()">Calculate</button>
 </div>
 
 <script>
-    function calculate() {
-        const num1Str = document.getElementById('num1').value;
-        const num2Str = document.getElementById('num2').value;
-        const operator = document.getElementById('operator').value;
-        const resultDiv = document.getElementById('result');
+  let currentOp = '+';
 
-        resultDiv.className = 'result';
+  function setOp(op){
+    currentOp = op;
+    document.querySelectorAll('.op-btn').forEach(b=>{
+      b.classList.toggle('active', b.dataset.op === op);
+    });
+    updateExpr();
+  }
 
-        if (num1Str === '' || num2Str === '') {
-            resultDiv.className = 'result error';
-            resultDiv.innerText = 'Please enter both numbers.';
-            return;
-        }
+  function updateExpr(){
+    const a = document.getElementById('num1').value || '0';
+    const b = document.getElementById('num2').value || '0';
+    const symbols = { '+':'+', '-':'−', '*':'×', '/':'÷' };
+    document.getElementById('expr').innerText = `${a} ${symbols[currentOp]} ${b}`;
+  }
 
-        const num1 = parseFloat(num1Str);
-        const num2 = parseFloat(num2Str);
+  function calculate(){
+    const num1Str = document.getElementById('num1').value;
+    const num2Str = document.getElementById('num2').value;
+    const resultDiv = document.getElementById('result');
+    resultDiv.classList.remove('err');
 
-        if (operator === '/' && num2 === 0) {
-            resultDiv.className = 'result error';
-            resultDiv.innerText = 'Error: Division by zero is not allowed.';
-            return;
-        }
-
-        let res;
-        switch (operator) {
-            case '+': res = num1 + num2; break;
-            case '-': res = num1 - num2; break;
-            case '*': res = num1 * num2; break;
-            case '/': res = num1 / num2; break;
-        }
-
-        resultDiv.innerText = `Result: ${res}`;
+    if (num1Str === '' || num2Str === ''){
+      resultDiv.classList.add('err');
+      resultDiv.innerText = 'Please enter both numbers.';
+      return;
     }
+
+    const num1 = parseFloat(num1Str);
+    const num2 = parseFloat(num2Str);
+
+    if (currentOp === '/' && num2 === 0){
+      resultDiv.classList.add('err');
+      resultDiv.innerText = 'Error: division by zero.';
+      return;
+    }
+
+    let res;
+    switch(currentOp){
+      case '+': res = num1 + num2; break;
+      case '-': res = num1 - num2; break;
+      case '*': res = num1 * num2; break;
+      case '/': res = num1 / num2; break;
+    }
+
+    if (!Number.isInteger(res)){
+      res = Math.round(res * 1e8) / 1e8;
+    }
+
+    resultDiv.innerText = res;
+  }
 </script>
 </body>
 </html>
